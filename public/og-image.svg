@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Polymarket Whale Radar">
+  <rect width="1200" height="630" fill="#090b0f"/>
+  <path d="M0 96h1200M0 534h1200M96 0v630M1104 0v630" stroke="#164e63" stroke-width="2" opacity=".45"/>
+  <path d="M120 384h768" stroke="#22d3ee" stroke-width="4" opacity=".9"/>
+  <path d="M120 384h674" stroke="#fbbf24" stroke-width="22"/>
+  <text x="120" y="164" fill="#a5f3fc" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="26" letter-spacing="7">POLYMARKET</text>
+  <text x="120" y="254" fill="#fafafa" font-family="Inter, Arial, sans-serif" font-size="82" font-weight="700">Whale Radar</text>
+  <text x="120" y="326" fill="#a1a1aa" font-family="Inter, Arial, sans-serif" font-size="34">See who really holds each side.</text>
+  <text x="120" y="474" fill="#fbbf24" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="700">Top holder: 99.5%</text>
+  <text x="120" y="540" fill="#71717a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22">holder concentration is not proof of manipulation</text>
+</svg>
