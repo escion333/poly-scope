@@ -1,0 +1,7 @@
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M416.5 194V83H305" stroke="black" style="stroke:black;stroke-opacity:1;" stroke-width="16"/>
+<path d="M83 194V83H194.5" stroke="black" style="stroke:black;stroke-opacity:1;" stroke-width="16"/>
+<path d="M82 305V416H193.5" stroke="black" style="stroke:black;stroke-opacity:1;" stroke-width="16"/>
+<path d="M304.25 415.5L415.25 415.5L415.25 304" stroke="black" style="stroke:black;stroke-opacity:1;" stroke-width="16"/>
+<path d="M286.647 286.233C286.647 290.102 286.647 292.036 285.381 292.995C284.116 293.954 282.253 293.432 278.528 292.386L218.665 275.588C216.42 274.958 215.298 274.643 214.649 273.787C214 272.931 214 271.765 214 269.434V230.066C214 227.735 214 226.569 214.649 225.713C215.298 224.857 216.42 224.542 218.665 223.912L278.528 207.113C282.253 206.068 284.116 205.546 285.381 206.505C286.647 207.464 286.647 209.398 286.647 213.267V249.75V286.233ZM228.93 270.111L278.497 284.022V256.202L228.93 270.111ZM222.149 263.658L271.706 249.75L222.149 235.842V263.658ZM228.929 229.389L278.497 243.299V215.478L228.929 229.389Z" fill="black" style="fill:black;fill-opacity:1;"/>
+</svg>

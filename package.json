@@ -7,13 +7,18 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "studio": "remotion studio",
+    "render": "remotion render HelloWorld out/hello-world.mp4"
   },
   "dependencies": {
+    "@remotion/cli": "^4.0.471",
+    "@remotion/player": "^4.0.471",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "remotion": "^4.0.471"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
