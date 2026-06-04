@@ -2,6 +2,7 @@ import { ChevronRight, ExternalLink, Loader2, Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
 import { clsx } from 'clsx'
+import { Analytics } from '@vercel/analytics/react'
 import logoUrl from './assets/polyscope.svg'
 import {
   compactNumber,
@@ -112,6 +113,7 @@ function App() {
 
   return (
     <main className="min-h-screen bg-[#080a0d] text-zinc-100">
+      <Analytics />
       <div className="fixed inset-0 -z-10 bg-[linear-gradient(rgba(34,211,238,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.045)_1px,transparent_1px)] bg-[size:42px_42px]" />
       <section className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-6 sm:px-8 lg:px-10">
         <Hero
