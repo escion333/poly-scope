@@ -23,7 +23,15 @@ export type GammaEvent = {
   icon?: string
   active?: boolean
   closed?: boolean
+  volume24hr?: number | string
   markets?: GammaMarket[]
+}
+
+export type TrendingEvent = {
+  slug: string
+  title: string
+  marketCount: number
+  volume24hr: number
 }
 
 type MarketPositionGroup = {
@@ -100,6 +108,70 @@ export function parseEventSlug(input: string) {
 
 export async function fetchEvent(slug: string) {
   return fetchJSON<GammaEvent>(`${CONFIG.GAMMA_API}/events/slug/${slug}`)
+}
+
+// Top open events by 24h volume, for the "try one of these" row under the
+// search bar. Over-fetches a little and filters so we still fill `limit` after
+// dropping events with no open markets. The list endpoint always nests full
+// market arrays (no sparse-fieldset option), so we cache the slimmed result in
+// sessionStorage to avoid re-paying that payload on every refresh.
+// Callers treat a thrown error as "show nothing".
+const TRENDING_CACHE_KEY = 'poly-scope:trending'
+const TRENDING_TTL_MS = 10 * 60 * 1000
+
+export async function fetchTrendingEvents(limit = 6): Promise<TrendingEvent[]> {
+  const cached = readTrendingCache()
+  if (cached) return cached.slice(0, limit)
+
+  const url = new URL(`${CONFIG.GAMMA_API}/events`)
+  url.searchParams.set('limit', String(limit + 2))
+  url.searchParams.set('active', 'true')
+  url.searchParams.set('closed', 'false')
+  url.searchParams.set('archived', 'false')
+  url.searchParams.set('order', 'volume24hr')
+  url.searchParams.set('ascending', 'false')
+
+  const events = await fetchJSON<GammaEvent[]>(url.toString())
+
+  const trending = events
+    .map((event) => ({
+      slug: event.slug,
+      title: event.title,
+      marketCount: (event.markets ?? []).filter((market) => !market.closed)
+        .length,
+      volume24hr: parseNumber(event.volume24hr),
+    }))
+    .filter((event) => event.slug && event.title && event.marketCount > 0)
+    .slice(0, limit)
+
+  writeTrendingCache(trending)
+  return trending
+}
+
+function readTrendingCache(): TrendingEvent[] | null {
+  try {
+    const raw = sessionStorage.getItem(TRENDING_CACHE_KEY)
+    if (!raw) return null
+    const { at, events } = JSON.parse(raw) as {
+      at: number
+      events: TrendingEvent[]
+    }
+    if (!Array.isArray(events) || Date.now() - at > TRENDING_TTL_MS) return null
+    return events
+  } catch {
+    return null
+  }
+}
+
+function writeTrendingCache(events: TrendingEvent[]) {
+  try {
+    sessionStorage.setItem(
+      TRENDING_CACHE_KEY,
+      JSON.stringify({ at: Date.now(), events }),
+    )
+  } catch {
+    // Private mode / quota — caching is best-effort.
+  }
 }
 
 export async function analyzeEvent(

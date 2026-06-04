@@ -23,3 +23,42 @@ button,
 input {
   font: inherit;
 }
+
+/* Trending-events ticker: one continuous scroll across a duplicated track,
+   so translating by -50% loops seamlessly. */
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
+  will-change: transform;
+}
+
+.ticker-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker {
+    animation: none;
+  }
+}

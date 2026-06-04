@@ -1,6 +1,6 @@
 import { ChevronRight, ExternalLink, Loader2, Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import type { FormEvent } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { CSSProperties, FormEvent } from 'react'
 import { clsx } from 'clsx'
 import logoUrl from './assets/polyscope.svg'
 import {
@@ -12,6 +12,7 @@ import {
 import {
   analyzeEvent,
   fetchEvent,
+  fetchTrendingEvents,
   parseEventSlug,
 } from './lib/polymarket'
 import type {
@@ -20,6 +21,7 @@ import type {
   OutcomeAnalysis,
   ProgressUpdate,
   RankedHolder,
+  TrendingEvent,
 } from './lib/polymarket'
 
 const BUILD_DAY = 1
@@ -39,6 +41,20 @@ function App() {
   const [event, setEvent] = useState<GammaEvent | null>(null)
   const [markets, setMarkets] = useState<MarketAnalysis[]>([])
   const [progress, setProgress] = useState<ProgressUpdate | null>(null)
+  const [trending, setTrending] = useState<TrendingEvent[]>([])
+
+  useEffect(() => {
+    let active = true
+    // Discovery is best-effort: on any failure we just show no example row.
+    fetchTrendingEvents()
+      .then((events) => {
+        if (active) setTrending(events)
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [])
 
   const marketStats = useMemo(() => {
     const outcomeCount = markets.reduce(
@@ -100,10 +116,13 @@ function App() {
       <section className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-6 sm:px-8 lg:px-10">
         <Hero
           compact={state === 'success' && Boolean(event)}
+          examples={trending}
           input={input}
           isLoading={state === 'loading'}
           onInput={setInput}
+          onSelectExample={(slug) => void runAnalysis(slug)}
           onSubmit={handleSubmit}
+          showExamples={state === 'idle'}
         />
 
         {state === 'loading' || state === 'error' ? (
@@ -140,16 +159,22 @@ function App() {
 
 function Hero({
   compact = false,
+  examples,
   input,
   isLoading,
   onInput,
+  onSelectExample,
   onSubmit,
+  showExamples = false,
 }: {
   compact?: boolean
+  examples: TrendingEvent[]
   input: string
   isLoading: boolean
   onInput: (input: string) => void
+  onSelectExample: (slug: string) => void
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
+  showExamples?: boolean
 }) {
   return (
     <section
@@ -202,6 +227,13 @@ function Hero({
             onSubmit={onSubmit}
           />
         </div>
+        {showExamples && examples.length ? (
+          <ExampleMarkets
+            disabled={isLoading}
+            examples={examples}
+            onSelect={onSelectExample}
+          />
+        ) : null}
         {compact ? (
           <p className="mt-3 w-full max-w-xl font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-600">
             Data from Polymarket. Holdings = exposure, not who moved the price.
@@ -252,6 +284,55 @@ function SearchPanel({
         </button>
       </div>
     </form>
+  )
+}
+
+function ExampleMarkets({
+  disabled = false,
+  examples,
+  onSelect,
+}: {
+  disabled?: boolean
+  examples: TrendingEvent[]
+  onSelect: (slug: string) => void
+}) {
+  // Duplicate the chips so the -50% scroll wraps seamlessly. Duration scales
+  // with chip count to keep a constant glide speed regardless of how many load.
+  const track = [...examples, ...examples]
+  const duration = `${Math.max(24, examples.length * 7)}s`
+
+  return (
+    <div className="mt-5 w-full max-w-xl">
+      <p className="mb-2.5 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-600">
+        Or scope a trending event
+      </p>
+      <div className="group/ticker ticker-mask overflow-hidden">
+        <div
+          className="animate-ticker flex w-max gap-2 group-hover/ticker:[animation-play-state:paused]"
+          style={{ '--ticker-duration': duration } as CSSProperties}
+        >
+          {track.map((example, index) => (
+            <button
+              key={`${example.slug}-${index}`}
+              type="button"
+              disabled={disabled}
+              onClick={() => onSelect(example.slug)}
+              title={example.title}
+              aria-hidden={index >= examples.length}
+              tabIndex={index >= examples.length ? -1 : 0}
+              className="group/chip flex shrink-0 items-center gap-2 border border-white/10 bg-white/[0.035] px-3 py-2 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/[0.06] disabled:cursor-wait disabled:opacity-50"
+            >
+              <span className="max-w-[15rem] truncate text-sm text-zinc-200 group-hover/chip:text-cyan-100">
+                {example.title}
+              </span>
+              <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-600">
+                {example.marketCount} mkt{example.marketCount === 1 ? '' : 's'}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
