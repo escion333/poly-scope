@@ -14,6 +14,7 @@
   "dependencies": {
     "@remotion/cli": "^4.0.471",
     "@remotion/player": "^4.0.471",
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
     "react": "^19.2.6",
