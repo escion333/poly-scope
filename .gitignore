@@ -27,3 +27,8 @@ out
 *.sln
 *.sw?
 .vercel
+
+# Local env
+.env
+.env.local
+.env.*.local
