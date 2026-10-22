@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-function AppCrashed() {
+export function AppCrashed() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#080a0d] px-6 text-center text-zinc-100">
       <div>
